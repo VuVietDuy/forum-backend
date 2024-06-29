@@ -1,0 +1,84 @@
+USE forum_dev;
+
+CREATE TABLE postType (
+    id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    typeName VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE voteType (
+    id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    voteType VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE tag (
+    name VARCHAR(255) PRIMARY KEY NOT NULL,
+    description LONGTEXT
+);
+
+CREATE TABLE user (
+    id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    fullname VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    dateOfBirth DATE,
+    avatar VARCHAR(255),
+    website VARCHAR(255),
+    bio LONGTEXT,
+    verified TINYINT DEFAULT 0,
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE post (
+    id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    title LONGTEXT NOT NULL,
+    detail LONGTEXT NOT NULL,
+    postTypeId INTEGER NOT NULL,
+    createdBy INTEGER,
+    acceptedAnswerId INTEGER,
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updatedAt TIMESTAMP
+);
+
+CREATE TABLE vote (
+    id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    postId INTEGER NOT NULL,
+    userId INTEGER NOT NULL,
+    voteTypeId INTEGER NOT NULL
+);
+
+CREATE TABLE comment (
+    id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    postId INTEGER NOT NULL,
+    userId INTEGER NOT NULL,
+    content LONGTEXT NOT NULL,
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updatedAt TIMESTAMP
+);
+
+CREATE TABLE postTag (
+    postId INTEGER,
+    tagName VARCHAR(255) 
+);
+
+ALTER TABLE postTag ADD FOREIGN KEY (postId) REFERENCES post (id);
+
+ALTER TABLE postTag ADD FOREIGN KEY (tagName) REFERENCES tag (name);
+
+ALTER TABLE post ADD FOREIGN KEY (createdBy) REFERENCES user (id);
+
+ALTER TABLE post ADD FOREIGN KEY (postTypeId) REFERENCES postType (id);
+
+ALTER TABLE vote ADD FOREIGN KEY (postId) REFERENCES post (id);
+
+ALTER TABLE vote ADD FOREIGN KEY (userId) REFERENCES user (id);
+
+ALTER TABLE comment ADD FOREIGN KEY (postId) REFERENCES post (id);
+
+ALTER TABLE comment ADD FOREIGN KEY (userId) REFERENCES user (id);
+
+
+INSERT INTO postType (typeName) VALUES ('Question');
+INSERT INTO postType (typeName) VALUES ('Answer');
+
+INSERT INTO voteType (voteType) VALUES ('Up');
+INSERT INTO voteType (voteType) VALUES ('Down');
